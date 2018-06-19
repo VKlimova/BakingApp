@@ -2,7 +2,9 @@ package com.amargodigits.bakingapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,18 +14,31 @@ import android.widget.TextView;
 import com.amargodigits.bakingapp.model.Ingredient;
 import com.amargodigits.bakingapp.model.Step;
 import com.amargodigits.bakingapp.utils.NetworkUtils;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
+import java.net.URI;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
 public class StepActivity extends AppCompatActivity {
 
-    //    public static ArrayList<Recipe> mRecipeList = new ArrayList<>();
-//    public static ArrayList<Step> mStepList = new ArrayList<>();
-//    public static ArrayList<Ingredient> mIngredientList = new ArrayList<>();
-//    public static StepListAdapter rAdapter;
-//    public static GridView rGridview;
+
     public static TextView stepTV, stepVideo, stepThumb;
     public Context mContext;
     Toolbar mToolbar;
@@ -32,7 +47,6 @@ public class StepActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step);
         mContext = getApplicationContext();
-//        rGridview = (GridView) findViewById(R.id.step_grid_view);
         stepTV = (TextView) findViewById(R.id.step_text_view);
         stepVideo = (TextView) findViewById(R.id.step_video_view);
         stepThumb = (TextView) findViewById(R.id.step_thumb);
@@ -49,93 +63,39 @@ public class StepActivity extends AppCompatActivity {
         stepTV.setText(stepName);
         stepVideo.setText(stepVideoUrl);
         stepThumb.setText(stepThumbUrl);
-
         Log.i(LOG_TAG, "StepActivity, stepId : " + stepId + " stepName = " + stepName);
-//        try {
-//            NetworkUtils.LoadStepTask mAsyncTasc = new NetworkUtils.LoadStepTask(getApplicationContext());
-//            mAsyncTasc.execute(recId);
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Loading Steps data exception: " + e.toString());
-//        }
-//
-//        try {
-//            NetworkUtils.LoadIngredientTask mAsyncTasc = new NetworkUtils.LoadIngredientTask(getApplicationContext());
-//            mAsyncTasc.execute(recId);
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Loading Steps data exception: " + e.toString());
-//        }
 
+        // 1. Create a default TrackSelector
+        Handler mainHandler = new Handler();
 
-        Log.i(LOG_TAG, "StepActivity, main thread ");
+        // Measures bandwidth during playback. Can be null if not required.
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
 
-//        rGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                Step item = (Step) adapterView.getItemAtPosition(position);
-//                String recId = item.getId();
-//                Intent intent = new Intent(mContext, DetailActivity.class);
-//                intent.putExtra("RecId", recId);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                try {
-//                    mContext.startActivity(intent);
-//                } catch (Exception e) {
-//                    Log.i(LOG_TAG, "Opening movie details exception: " + e.toString());
-//                }
-//
-////                Thoast.make(view, "Name="+ item.getName() + ", ID=" + item.getName(), Toast.LENGTH_LONG)
-////                        .setAction("Action", null).show();
-////               Intent browserIntent = new Intent(Intent.ACTION_VIEW, "recId"));
-////                startActivity(browserIntent);
-//            }
-//        });
+// 2. Create the player
+        SimpleExoPlayer exoPlayer =
+                ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+// Bind the player to the view.
+        SimpleExoPlayerView mPlayerView;
+        // Initialize the player view.
+        mPlayerView = (SimpleExoPlayerView) findViewById(R.id.playerView);
+        mPlayerView.setPlayer(exoPlayer);
+exoPlayer.setPlayWhenReady(true);
+// Produces DataSource instances through which media data is loaded.
 
+        String userAgent = Util.getUserAgent(this, "BakingApp");
+        Uri mediaUri= Uri.parse(stepVideoUrl);
+        MediaSource videoSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                this, userAgent), new DefaultExtractorsFactory(), null, null);
+
+// This is the MediaSource representing the media to be played.
+
+// Prepare the player with the source.
+        exoPlayer.prepare(videoSource);
     }
-
-//    public static void doStepView(Context tContext) {
-//        Log.i(LOG_TAG, "doGridView");
-//        Log.i(LOG_TAG, "mRecipieList.size = " + mStepList.size());
-//        Log.i(LOG_TAG, "tContext = " + tContext);
-//        try {
-//            //     Log.i(LOG_TAG, "  doGridView before   mAdapter.getCount=" + mAdapter.getCount() );
-//            rAdapter = new StepListAdapter(tContext, R.layout.recipe_item_layout, mStepList);
-//            Log.i(LOG_TAG, "  doGridView after   mAdapter.getCount=" + rAdapter.getCount());
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Exception  mAdapter = new BakingListAdapter(tContext, R.layout.grid_item_layout, mRecipeList); = " + e.toString());
-//        }
-//        rAdapter.notifyDataSetChanged();
-//
-//        try {
-//            Log.i(LOG_TAG, "  mGridview.getCount before " + rGridview.getCount());
-//            rGridview.setAdapter(StepActivity.rAdapter);
-//            Log.i(LOG_TAG, "  mGridview.getCount after " + rGridview.getCount());
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Exception  MainActivity.mGridview.setAdapter(MainActivity.mAdapter) = " + e.toString());
-//        }
-//
-//        rAdapter.notifyDataSetChanged();
-//        Log.i(LOG_TAG, "  doGridView before return   mAdapter.getCount=" + rAdapter.getCount());
-//        Log.i(LOG_TAG, "  doGridView before return   mGridview.getCount=" + rGridview.getCount());
-//
-//        return;
-//    }
-
-//    public static void doIngredientView(Context tContext) {
-//        String ingredients = "";
-//
-//        Log.i(LOG_TAG, "doIngredientView");
-//        Log.i(LOG_TAG, "mIngredientList.size = " + mIngredientList.size());
-//        ingredients = ingredients.concat("Ingredients. ");
-//        for (int j = 0; (j < mIngredientList.size()); j++) {
-//            if (j > 0) {
-//                ingredients = ingredients.concat("; ");
-//            }
-//            ingredients = ingredients.concat(mIngredientList.get(j).getIngredient())
-//                    .concat(": ").concat(mIngredientList.get(j).getQuantity()).concat(" ")
-//                    .concat(mIngredientList.get(j).getMeasure());
-//        }
-//        ingredientsTV.setText(ingredients);
-//        return;
-//    }
 
 
 }
