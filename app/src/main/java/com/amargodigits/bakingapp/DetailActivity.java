@@ -77,6 +77,7 @@ public class DetailActivity extends AppCompatActivity {
                 Intent intent = new Intent(mContext, StepActivity.class);
                 intent.putExtra("stepId", stepId);
                 intent.putExtra("stepName", stepName);
+                intent.putExtra("stepDescr", stepDescr);
                 intent.putExtra("recName", recName);
                 intent.putExtra("stepThumbUrl",stepThumbUrl);
                 intent.putExtra("stepVideoUrl", stepVideoUrl);

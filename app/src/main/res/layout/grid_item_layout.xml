@@ -16,7 +16,7 @@
     android:id="@+id/grid_item_layout"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
+    android:layout_margin="5dp"
     android:background="@drawable/grid_color_selector"
     android:orientation="vertical"
     android:padding="5dp">
@@ -25,8 +25,7 @@
         android:id="@+id/recipe_name"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="5dp"
         android:gravity="left"
         android:textColor="@color/darkGrey"
         android:textSize="17sp" />

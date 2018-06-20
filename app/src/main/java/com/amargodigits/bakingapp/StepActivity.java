@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -42,6 +43,7 @@ public class StepActivity extends AppCompatActivity {
     public static TextView stepTV, stepVideo, stepThumb;
     public Context mContext;
     Toolbar mToolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,9 +52,11 @@ public class StepActivity extends AppCompatActivity {
         stepTV = (TextView) findViewById(R.id.step_text_view);
         stepVideo = (TextView) findViewById(R.id.step_video_view);
         stepThumb = (TextView) findViewById(R.id.step_thumb);
+        SimpleExoPlayerView mPlayerView = (SimpleExoPlayerView) findViewById(R.id.playerView);
         Intent intent = getIntent();
         String stepId = intent.getStringExtra("stepId");
         String stepName = intent.getStringExtra("stepName");
+        String stepDescr = intent.getStringExtra("stepDescr");
         String recName = intent.getStringExtra("recName");
         String stepThumbUrl = intent.getStringExtra("stepThumbUrl");
         String stepVideoUrl = intent.getStringExtra("stepVideoUrl");
@@ -60,41 +64,43 @@ public class StepActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.menu_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(recName);
-        stepTV.setText(stepName);
+        stepTV.setText(stepDescr);
         stepVideo.setText(stepVideoUrl);
         stepThumb.setText(stepThumbUrl);
         Log.i(LOG_TAG, "StepActivity, stepId : " + stepId + " stepName = " + stepName);
+        if (stepVideoUrl.contains(".mp4")) {
 
-        // 1. Create a default TrackSelector
-        Handler mainHandler = new Handler();
+            // 1. Create a default TrackSelector
+          //  Handler mainHandler = new Handler();
+            // Measures bandwidth during playback. Can be null if not required.
+            BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+            TrackSelection.Factory videoTrackSelectionFactory =
+                    new AdaptiveTrackSelection.Factory(bandwidthMeter);
+            TrackSelector trackSelector =
+                    new DefaultTrackSelector(videoTrackSelectionFactory);
 
-        // Measures bandwidth during playback. Can be null if not required.
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
+            // 2. Create the player
+            SimpleExoPlayer exoPlayer =
+                    ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+            // Initialize the player view.
 
-// 2. Create the player
-        SimpleExoPlayer exoPlayer =
-                ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
-// Bind the player to the view.
-        SimpleExoPlayerView mPlayerView;
-        // Initialize the player view.
-        mPlayerView = (SimpleExoPlayerView) findViewById(R.id.playerView);
-        mPlayerView.setPlayer(exoPlayer);
-exoPlayer.setPlayWhenReady(true);
-// Produces DataSource instances through which media data is loaded.
+            mPlayerView.setPlayer(exoPlayer);
+            exoPlayer.setPlayWhenReady(true);
+            // Produces DataSource instances through which media data is loaded.
 
-        String userAgent = Util.getUserAgent(this, "BakingApp");
-        Uri mediaUri= Uri.parse(stepVideoUrl);
-        MediaSource videoSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                this, userAgent), new DefaultExtractorsFactory(), null, null);
+            String userAgent = Util.getUserAgent(this, "BakingApp");
+            Uri mediaUri = Uri.parse(stepVideoUrl);
+            MediaSource videoSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                    this, userAgent), new DefaultExtractorsFactory(), null, null);
 
-// This is the MediaSource representing the media to be played.
+            // This is the MediaSource representing the media to be played.
 
-// Prepare the player with the source.
-        exoPlayer.prepare(videoSource);
+            // Prepare the player with the source.
+            exoPlayer.prepare(videoSource);
+        } else {
+            stepVideo.setText("No video for this step");
+            mPlayerView.setVisibility(View.GONE);
+        }
     }
 
 
