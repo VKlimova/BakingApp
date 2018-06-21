@@ -19,13 +19,19 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import static com.amargodigits.bakingapp.DetailActivity.doIngredientView;
-import static com.amargodigits.bakingapp.DetailActivity.mIngredientList;
+//import static com.amargodigits.bakingapp.DetailActivity.doIngredientView;
+//import static com.amargodigits.bakingapp.DetailActivity.mIngredientList;
+//import static com.amargodigits.bakingapp.DetailActivity.mStepList;
+//import static com.amargodigits.bakingapp.DetailActivity.doStepView;
+
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 import static com.amargodigits.bakingapp.MainActivity.doGridView;
 import static com.amargodigits.bakingapp.MainActivity.mRecipeList;
-import static com.amargodigits.bakingapp.DetailActivity.mStepList;
-import static com.amargodigits.bakingapp.DetailActivity.doStepView;
+
+import static com.amargodigits.bakingapp.ListFragment.doIngredientView;
+import static com.amargodigits.bakingapp.ListFragment.mIngredientList;
+import static com.amargodigits.bakingapp.ListFragment.mStepList;
+import static com.amargodigits.bakingapp.ListFragment.doStepView;
 
 public class NetworkUtils {
     /**

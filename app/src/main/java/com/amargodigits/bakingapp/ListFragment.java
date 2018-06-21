@@ -1,27 +1,29 @@
 package com.amargodigits.bakingapp;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.amargodigits.bakingapp.model.Ingredient;
-import com.amargodigits.bakingapp.model.Recipe;
 import com.amargodigits.bakingapp.model.Step;
 import com.amargodigits.bakingapp.utils.NetworkUtils;
-import com.amargodigits.bakingapp.utils.NetworkUtils.LoadRecipiesTask;
 
 import java.util.ArrayList;
 
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
-public class DetailActivity extends AppCompatActivity {
+public class ListFragment extends Fragment {
 
     //    public static ArrayList<Recipe> mRecipeList = new ArrayList<>();
     public static ArrayList<Step> mStepList = new ArrayList<>();
@@ -34,37 +36,38 @@ public class DetailActivity extends AppCompatActivity {
     String recName;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-//        setContentView(R.layout.activity_recipe);
-        mContext = getApplicationContext();
-        rGridview = (GridView) findViewById(R.id.step_grid_view);
-        ingredientsTV = (TextView) findViewById(R.id.ingredients_text_view);
-        Intent intent = getIntent();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+     //   super.onCreate(savedInstanceState);
+//        setContentView(R.layout.fragment_steps_list);
+        View rootView =
+                inflater.inflate(R.layout.fragment_steps_list, container, false);
+        mContext = getContext();
+        rGridview = (GridView) rootView.findViewById(R.id.step_grid_view);
+        ingredientsTV = (TextView) rootView.findViewById(R.id.ingredients_text_view);
+        Intent intent = getActivity().getIntent();
         String recId = intent.getStringExtra("recId");
          recName = intent.getStringExtra("recName");
-        mToolbar = (Toolbar) findViewById(R.id.menu_toolbar);
-        setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle(recName);
+        mToolbar = (Toolbar) rootView.findViewById(R.id.menu_toolbar);
+//        setSupportActionBar(mToolbar);
+//        getSupportActionBar().setTitle(recName);
 
-        Log.i(LOG_TAG, "DetailActivity, recId : " + recId + " recName = " + recName);
+        Log.i(LOG_TAG, "ListFragment, recId : " + recId + " recName = " + recName);
         try {
-            NetworkUtils.LoadStepTask mAsyncTasc = new NetworkUtils.LoadStepTask(getApplicationContext());
+            NetworkUtils.LoadStepTask mAsyncTasc = new NetworkUtils.LoadStepTask(getContext());
             mAsyncTasc.execute(recId);
         } catch (Exception e) {
             Log.i(LOG_TAG, "Loading Steps data exception: " + e.toString());
         }
 
         try {
-            NetworkUtils.LoadIngredientTask mAsyncTasc = new NetworkUtils.LoadIngredientTask(getApplicationContext());
+            NetworkUtils.LoadIngredientTask mAsyncTasc = new NetworkUtils.LoadIngredientTask(getContext());
             mAsyncTasc.execute(recId);
         } catch (Exception e) {
-            Log.i(LOG_TAG, "Loading Steps data exception: " + e.toString());
+            Log.i(LOG_TAG, "ListFragment: Loading Steps data exception: " + e.toString());
         }
 
 
-        Log.i(LOG_TAG, "DetailActivity, main thread after AsyncTAsc");
+        Log.i(LOG_TAG, "ListFragment, main thread after AsyncTAsc");
 
         rGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -96,6 +99,9 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
+        Log.i(LOG_TAG, "ListFragment, main thread before return");
+
+        return rootView;
     }
 
     public static void doStepView(Context tContext) {
@@ -113,10 +119,10 @@ public class DetailActivity extends AppCompatActivity {
 
         try {
             Log.i(LOG_TAG, "  mGridview.getCount before " + rGridview.getCount());
-            rGridview.setAdapter(DetailActivity.rAdapter);
+            rGridview.setAdapter(ListFragment.rAdapter);
             Log.i(LOG_TAG, "  mGridview.getCount after " + rGridview.getCount());
         } catch (Exception e) {
-            Log.i(LOG_TAG, "Exception in DetailActivity.mGridview.setAdapter(DetailActivity.mAdapter) = " + e.toString());
+            Log.i(LOG_TAG, "Exception  ListFragment.mGridview.setAdapter(ListFragment.mAdapter) = " + e.toString());
         }
 
         rAdapter.notifyDataSetChanged();

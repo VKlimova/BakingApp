@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
                 String recId = item.getId();
                 String recName = item.getName();
                 Log.i(LOG_TAG, "MainActivity, recId : " + recId);
-                Intent intent = new Intent(mContext, DetailActivity.class);
+//                Intent intent = new Intent(mContext, DetailActivity.class);
+                Intent intent = new Intent(mContext, RecipeActivity.class);
                 intent.putExtra("recId", recId);
                 intent.putExtra("recName", recName);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
