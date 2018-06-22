@@ -32,11 +32,10 @@ import com.squareup.picasso.Picasso;
 StepFragment is a fragment with one step of recipe
  */
 public class StepFragment extends Fragment {
-    public static TextView stepTV, stepVideo, stepThumb;
+    public static TextView stepTV, stepVideo;
     public SimpleExoPlayerView mPlayerView;
     public ImageView thumbImage;
     public Context mContext;
-    Toolbar mToolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,7 +53,7 @@ public class StepFragment extends Fragment {
     public void setStepDetails(String stepDescr, String stepVideoUrl, String stepThumbUrl) {
 
         if ((stepDescr != null) && (!stepDescr.isEmpty())) stepTV.setText(stepDescr);
-        else stepTV.setText("Description is empty");
+        else stepTV.setText(getString(R.string.descr_empty));
 
         try {
             if ((stepVideoUrl != null) && (!stepVideoUrl.isEmpty())) {
@@ -77,11 +76,11 @@ public class StepFragment extends Fragment {
                     exoPlayer.prepare(videoSource);
                     mPlayerView.setVisibility(View.VISIBLE);
                 } else {
-                    stepVideo.setText("No video for this step");
+                    stepVideo.setText(getString(R.string.no_video));
                     mPlayerView.setVisibility(View.GONE);
                 }
             } else {
-                stepVideo.setText("No video for this step");
+                stepVideo.setText(getString(R.string.no_video));
                 mPlayerView.setVisibility(View.GONE);
             }
         } catch (Exception e) {

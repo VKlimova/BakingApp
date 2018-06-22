@@ -114,10 +114,7 @@ public class ListFragment extends Fragment {
             Log.i(LOG_TAG, "Exception  ListFragment.mGridview.setAdapter(ListFragment.mAdapter) = " + e.toString());
             throw new RuntimeException(e);
         }
-
         rAdapter.notifyDataSetChanged();
-
-        return;
     }
 
     public static void doIngredientView(Context tContext) {
@@ -140,8 +137,6 @@ public class ListFragment extends Fragment {
         remoteViews.setTextViewText(R.id.appwidget_title, recName);
         remoteViews.setTextViewText(R.id.appwidget_text, ingredients);
         appWidgetManager.updateAppWidget(thisWidget, remoteViews);
-
-        return;
     }
 
 

@@ -22,9 +22,6 @@ Detail Activity shows the list of recipes
 
 public class DetailActivity extends AppCompatActivity {
 
-    public static ArrayList<Step> mStepList = new ArrayList<>();
-    public static ArrayList<Ingredient> mIngredientList = new ArrayList<>();
-    public static StepListAdapter rAdapter;
     public static GridView rGridview;
     public static TextView ingredientsTV;
     public Context mContext;

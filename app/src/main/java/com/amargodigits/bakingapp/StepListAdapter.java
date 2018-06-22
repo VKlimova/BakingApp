@@ -36,7 +36,7 @@ public class StepListAdapter extends ArrayAdapter<Step> {
             Step currentRec = getItem(position);
             if (convertView == null) {
                 // If it's not recycled, initialize some attributes
-                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );;
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService( Context.LAYOUT_INFLATER_SERVICE );
                 convertView = inflater.inflate(layoutResourceId, parent, false);
                 holder = new ViewHolder();
                 holder.recTitle = (TextView) convertView.findViewById(R.id.step_name);

@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -29,7 +28,6 @@
         android:text="@string/select_step"
         android:textColor="@color/darkGrey"
         android:textSize="15sp" />
-
     <TextView
         android:id="@+id/step_video_view"
         android:layout_width="fill_parent"
@@ -39,7 +37,4 @@
         android:text=""
         android:textColor="@color/colorPrimaryDark"
         android:textSize="15sp" />
-
-
-
 </LinearLayout>

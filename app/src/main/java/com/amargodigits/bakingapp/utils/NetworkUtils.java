@@ -103,8 +103,6 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mRecipeList = result;
             doGridView(mContext);
-            return;
-
         }
     }
 
@@ -153,8 +151,6 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mStepList = result;
             doStepView(mContext);
-            return;
-
         }
     }
 
@@ -201,7 +197,6 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mIngredientList = result;
             doIngredientView(mContext);
-            return;
         }
     }
 

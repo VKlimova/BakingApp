@@ -9,7 +9,6 @@ import com.amargodigits.bakingapp.model.Step;
 import java.util.ArrayList;
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
-
 public class Json {
     /**
      * takes as the input raw Json string, fills in the recipieList[] array
