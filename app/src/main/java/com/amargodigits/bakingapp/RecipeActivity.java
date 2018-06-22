@@ -6,12 +6,17 @@ package com.amargodigits.bakingapp;
 // only the list of steps
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.RemoteViews;
+
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
 public class RecipeActivity extends AppCompatActivity implements ListFragment.OnStepListener {
@@ -31,6 +36,15 @@ public class RecipeActivity extends AppCompatActivity implements ListFragment.On
         }
         Intent intent = getIntent();
         recName = intent.getStringExtra("recName");
+
+
+//        Context context = this;
+//        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
+//        ComponentName thisWidget = new ComponentName(context, BakingWidgetProvider.class);
+//        remoteViews.setTextViewText(R.id.appwidget_text, "" + recName);
+//        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
         mToolbar = (Toolbar) findViewById(R.id.menu_toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(recName);

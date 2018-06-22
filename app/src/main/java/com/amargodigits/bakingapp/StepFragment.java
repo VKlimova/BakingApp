@@ -25,9 +25,7 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
-
 import com.squareup.picasso.Picasso;
 
 /*

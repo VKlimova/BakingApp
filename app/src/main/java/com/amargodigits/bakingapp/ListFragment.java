@@ -1,5 +1,7 @@
 package com.amargodigits.bakingapp;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 import com.amargodigits.bakingapp.model.Ingredient;
 import com.amargodigits.bakingapp.model.Step;
@@ -30,7 +33,7 @@ public class ListFragment extends Fragment {
     public static TextView ingredientsTV;
     public Context mContext;
     Toolbar mToolbar;
-    String recName;
+    static String recName;
     OnStepListener mStepListener;
 
     public interface OnStepListener {
@@ -129,6 +132,15 @@ public class ListFragment extends Fragment {
                     .concat(mIngredientList.get(j).getMeasure());
         }
         ingredientsTV.setText(ingredients);
+
+        Context context = tContext;
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
+        ComponentName thisWidget = new ComponentName(context, BakingWidgetProvider.class);
+        remoteViews.setTextViewText(R.id.appwidget_title, recName);
+        remoteViews.setTextViewText(R.id.appwidget_text, ingredients);
+        appWidgetManager.updateAppWidget(thisWidget, remoteViews);
+
         return;
     }
 
