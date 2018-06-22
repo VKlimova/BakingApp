@@ -1,18 +1,16 @@
 package com.amargodigits.bakingapp;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -30,77 +28,81 @@ import com.google.android.exoplayer2.util.Util;
 
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
+import com.squareup.picasso.Picasso;
+
+/*
+StepFragment is a fragment with one step of recipe
+ */
 public class StepFragment extends Fragment {
-
-
     public static TextView stepTV, stepVideo, stepThumb;
+    public SimpleExoPlayerView mPlayerView;
+    public ImageView thumbImage;
     public Context mContext;
     Toolbar mToolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        View rootView =
-                inflater.inflate(R.layout.fragment_step_detail, container, false);
-        mContext = getContext();
+        Log.i(LOG_TAG, "StepFragment onCreateView");
+        View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
+      mContext = getContext();
         stepTV = (TextView) rootView.findViewById(R.id.step_text_view);
         stepVideo = (TextView) rootView.findViewById(R.id.step_video_view);
-        stepThumb = (TextView) rootView.findViewById(R.id.step_thumb);
-        SimpleExoPlayerView mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
-        Intent intent = getActivity().getIntent();
-        String stepId = intent.getStringExtra("stepId");
-        String stepName = intent.getStringExtra("stepName");
-        String stepDescr = intent.getStringExtra("stepDescr");
-        String recName = intent.getStringExtra("recName");
-        String stepThumbUrl = intent.getStringExtra("stepThumbUrl");
-        String stepVideoUrl = intent.getStringExtra("stepVideoUrl");
+        mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
+        thumbImage = (ImageView) rootView.findViewById(R.id.step_thumb);
 
-        mToolbar = (Toolbar) rootView.findViewById(R.id.menu_toolbar);
-//        setSupportActionBar(mToolbar);
-//        getSupportActionBar().setTitle(recName);
-        stepTV.setText(stepDescr);
-        stepVideo.setText(stepVideoUrl);
-        stepThumb.setText(stepThumbUrl);
-        Log.i(LOG_TAG, "StepFragment, stepId : " + stepId + " stepName = " + stepName);
-try {
-    if (stepVideoUrl.contains(".mp4")) {
-        // 1. Create a default TrackSelector
-        //  Handler mainHandler = new Handler();
-        // Measures bandwidth during playback. Can be null if not required.
-        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
-        TrackSelection.Factory videoTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(bandwidthMeter);
-        TrackSelector trackSelector =
-                new DefaultTrackSelector(videoTrackSelectionFactory);
-
-        // 2. Create the player
-        SimpleExoPlayer exoPlayer =
-                ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
-        // Initialize the player view.
-
-        mPlayerView.setPlayer(exoPlayer);
-        exoPlayer.setPlayWhenReady(true);
-        // Produces DataSource instances through which media data is loaded.
-
-        String userAgent = Util.getUserAgent(getContext(), "BakingApp");
-        Uri mediaUri = Uri.parse(stepVideoUrl);
-        MediaSource videoSource = new ExtractorMediaSource(mediaUri,
-                new DefaultDataSourceFactory(getContext(), userAgent),
-                new DefaultExtractorsFactory(),
-                null, null);
-
-        // This is the MediaSource representing the media to be played.
-
-        // Prepare the player with the source.
-        exoPlayer.prepare(videoSource);
-    } else {
-        stepVideo.setText("No video for this step");
-        mPlayerView.setVisibility(View.GONE);
-    }
-} catch (Exception e){
-    Log.i(LOG_TAG, "StepFragment Exception " + e.toString());
-}
-        Log.i(LOG_TAG, "StepFragment, main thread before return");
         return rootView;
+    }
+
+    public void setStepDetails(String stepDescr, String stepVideoUrl, String stepThumbUrl) {
+
+        if ((stepDescr != null) && (!stepDescr.isEmpty())) stepTV.setText(stepDescr);
+        else stepTV.setText("Description is empty");
+
+        try {
+            if ((stepVideoUrl != null) && (!stepVideoUrl.isEmpty())) {
+                if (stepVideoUrl.contains(".mp4")) {
+                    BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+                    TrackSelection.Factory videoTrackSelectionFactory =
+                            new AdaptiveTrackSelection.Factory(bandwidthMeter);
+                    TrackSelector trackSelector =
+                            new DefaultTrackSelector(videoTrackSelectionFactory);
+                    SimpleExoPlayer exoPlayer =
+                            ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+                    mPlayerView.setPlayer(exoPlayer);
+                    exoPlayer.setPlayWhenReady(true);
+                    String userAgent = Util.getUserAgent(getContext(), "BakingApp");
+                    Uri mediaUri = Uri.parse(stepVideoUrl);
+                    MediaSource videoSource = new ExtractorMediaSource(mediaUri,
+                            new DefaultDataSourceFactory(getContext(), userAgent),
+                            new DefaultExtractorsFactory(),
+                            null, null);
+                    exoPlayer.prepare(videoSource);
+                    mPlayerView.setVisibility(View.VISIBLE);
+                } else {
+                    stepVideo.setText("No video for this step");
+                    mPlayerView.setVisibility(View.GONE);
+                }
+            } else {
+                stepVideo.setText("No video for this step");
+                mPlayerView.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "StepFragment Exception " + e.toString());
+        }
+
+        try {
+            if ((stepThumbUrl != null) && (!stepThumbUrl.isEmpty())) {
+                if (stepThumbUrl.length() > 1) {
+                    Picasso.with(getContext()).load(stepThumbUrl)
+                            .placeholder(android.R.drawable.stat_sys_download)
+                            .error(android.R.drawable.ic_menu_report_image)
+                            .into(thumbImage);
+                    thumbImage.setVisibility(View.VISIBLE);
+                } else thumbImage.setVisibility(View.GONE);
+            } else thumbImage.setVisibility(View.GONE);
+        } catch (Exception e) {
+            thumbImage.setVisibility(View.GONE);
+            Log.i(LOG_TAG, "StepFragment Exception " + e.toString());
+        }
     }
 }

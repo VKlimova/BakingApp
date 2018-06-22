@@ -12,39 +12,12 @@
         android:background="?attr/colorPrimary"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
-        android:id="@+id/playerView"
+    <fragment
+        android:id="@+id/fragment_step"
+        android:name="com.amargodigits.bakingapp.StepFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp" />
-
-    <TextView
-        android:id="@+id/step_text_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="left"
-        android:textColor="@color/darkGrey"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/step_video_view"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="left"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/step_thumb"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:gravity="left"
-        android:textColor="@color/colorPrimaryDark"
-        android:textSize="15sp" />
-
+        android:layout_height="match_parent"
+        />
 
 
 </LinearLayout>

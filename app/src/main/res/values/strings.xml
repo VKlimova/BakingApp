@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">BakingApp</string>
+    <string name="app_name">Baking App</string>
     <string name="error_message">Error:</string>
     <string name="no_data">No data</string>
+    <string name="select_step">Select step to display</string>
+    <string name="thumb">Thumbnail</string>
 </resources>

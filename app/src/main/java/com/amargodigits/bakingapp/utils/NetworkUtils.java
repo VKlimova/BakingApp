@@ -18,16 +18,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
-
-//import static com.amargodigits.bakingapp.DetailActivity.doIngredientView;
-//import static com.amargodigits.bakingapp.DetailActivity.mIngredientList;
-//import static com.amargodigits.bakingapp.DetailActivity.mStepList;
-//import static com.amargodigits.bakingapp.DetailActivity.doStepView;
-
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 import static com.amargodigits.bakingapp.MainActivity.doGridView;
 import static com.amargodigits.bakingapp.MainActivity.mRecipeList;
-
 import static com.amargodigits.bakingapp.ListFragment.doIngredientView;
 import static com.amargodigits.bakingapp.ListFragment.mIngredientList;
 import static com.amargodigits.bakingapp.ListFragment.mStepList;
@@ -37,7 +30,6 @@ public class NetworkUtils {
     /**
      * Builds the URL used to get Recipies list from the server.
      */
-
     public static URL buildRecipiesUrl() {
         Uri builtUri = Uri.parse("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json").buildUpon().build();
         URL url = null;
@@ -53,7 +45,6 @@ public class NetworkUtils {
      * This method returns the entire result from the HTTP response.
      * @param url The URL to fetch the HTTP response from.
      * @return The contents of the HTTP response.
-     * @throws IOException Related to network and stream reading
      */
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -83,8 +74,8 @@ public class NetworkUtils {
         }
         /**
          * This method make a Network request in background
-         * Load reviews list to reviewList
-         * @return Review[] -  the reviews  array
+         * Load recipes list
+         * @return ArrayList<Recipe>
          */
         @Override
         protected ArrayList<Recipe> doInBackground(Integer... params) {
@@ -112,7 +103,6 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mRecipeList = result;
             doGridView(mContext);
-            Log.i(LOG_TAG, "  onPostExecute before return   mRecipeList.size()=" + mRecipeList.size() );
             return;
 
         }
@@ -163,13 +153,10 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mStepList = result;
             doStepView(mContext);
-            Log.i(LOG_TAG, " LoadStepTask onPostExecute before return   mStepList.size()=" + mStepList.size() );
             return;
 
         }
     }
-
-
 
     /**
      * This method creates AsyncTask to make a Network request in background
@@ -196,9 +183,8 @@ public class NetworkUtils {
                     URL scheduleRequestUrl = NetworkUtils.buildRecipiesUrl();
                     String jsonResponse = NetworkUtils
                             .getResponseFromHttpUrl(scheduleRequestUrl);
-//                    Log.i(LOG_TAG, "recipeResponse " +recipeResponse );
                     ArrayList<Ingredient> ingredientsList = new ArrayList<>();
-                    ingredientsList= Json.getIngredientListStringsFromJson(jsonResponse,recId);
+                    ingredientsList=Json.getIngredientListStringsFromJson(jsonResponse,recId);
                     return ingredientsList;
                 } catch (Exception e) {
                     Log.i(LOG_TAG, R.string.error_message + e.toString());
@@ -215,12 +201,9 @@ public class NetworkUtils {
             super.onPostExecute(result);
             mIngredientList = result;
             doIngredientView(mContext);
-            Log.i(LOG_TAG, " LoadStepTask onPostExecute before return   mStepList.size()=" + mStepList.size() );
             return;
-
         }
     }
-
 
     /**
      * Checks if the device has network connection

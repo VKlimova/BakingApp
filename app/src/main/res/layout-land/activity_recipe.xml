@@ -21,14 +21,16 @@
             android:id="@+id/fragment_list"
             android:name="com.amargodigits.bakingapp.ListFragment"
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+           />
 
         <fragment
             android:id="@+id/fragment_step"
             android:name="com.amargodigits.bakingapp.StepFragment"
             android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            />
     </LinearLayout>
 </LinearLayout>
