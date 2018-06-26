@@ -4,8 +4,11 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +22,9 @@ import com.amargodigits.bakingapp.model.Ingredient;
 import com.amargodigits.bakingapp.model.Step;
 import com.amargodigits.bakingapp.utils.NetworkUtils;
 import java.util.ArrayList;
+
+import static android.content.Context.MODE_PRIVATE;
+import static com.amargodigits.bakingapp.BakingListAdapter.gridColumnsNumber;
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
 /*
@@ -29,14 +35,15 @@ public class ListFragment extends Fragment {
     public static ArrayList<Step> mStepList = new ArrayList<>();
     public static ArrayList<Ingredient> mIngredientList = new ArrayList<>();
     public static StepListAdapter rAdapter;
-    public static GridView rGridview;
+    public static RecyclerView rRecyclerView;
+    public static GridLayoutManager rLayoutManager;
     public static TextView ingredientsTV;
     public Context mContext;
     Toolbar mToolbar;
     static String recName;
     OnStepListener mStepListener;
 
-    public interface OnStepListener {
+    public static interface OnStepListener {
         void onStep(String stepDescr, String stepVideoUrl, String thumbUrl);
     }
     // Override onAttach to make sure that the container activity has implemented the callback
@@ -60,7 +67,9 @@ public class ListFragment extends Fragment {
         View rootView =
                 inflater.inflate(R.layout.fragment_steps_list, container, false);
         mContext = getContext();
-        rGridview = (GridView) rootView.findViewById(R.id.step_grid_view);
+        rRecyclerView = (RecyclerView) rootView.findViewById(R.id.step_grid_view);
+
+        rLayoutManager = new GridLayoutManager(mContext, 1);
         ingredientsTV = (TextView) rootView.findViewById(R.id.ingredients_text_view);
         Intent intent = getActivity().getIntent();
         String recId = intent.getStringExtra("recId");
@@ -80,41 +89,57 @@ public class ListFragment extends Fragment {
             Log.i(LOG_TAG, "ListFragment: Loading Steps data exception: " + e.toString());
             throw new RuntimeException(e);
         }
-        rGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Step item = (Step) adapterView.getItemAtPosition(position);
-                String stepDescr = item.getDescription();
-                String stepThumbUrl = item.getThumbnailUrl();
-                String stepVideoUrl = item.getVideoUrl();
-
-                try {
-                    mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl);
-                } catch (Exception e) {
-                    Log.i(LOG_TAG, "ListFragment mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl) Exception:\n "
-                            + e.toString());
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+//        rGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+//                Step item = (Step) adapterView.getItemAtPosition(position);
+//                String stepDescr = item.getDescription();
+//                String stepThumbUrl = item.getThumbnailUrl();
+//                String stepVideoUrl = item.getVideoUrl();
+//
+//                try {
+//                    mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl);
+//                } catch (Exception e) {
+//                    Log.i(LOG_TAG, "ListFragment mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl) Exception:\n "
+//                            + e.toString());
+//                    throw new RuntimeException(e);
+//                }
+//            }
+//        });
         return rootView;
     }
 
     public static void doStepView(Context tContext) {
         try {
-            rAdapter = new StepListAdapter(tContext, R.layout.recipe_item_layout, mStepList);
-        } catch (Exception e) {
-            Log.i(LOG_TAG, "Exception  mAdapter = new BakingListAdapter(tContext, R.layout.grid_item_layout, mRecipeList); = " + e.toString());
-        }
-        rAdapter.notifyDataSetChanged();
-
-        try {
-            rGridview.setAdapter(ListFragment.rAdapter);
-        } catch (Exception e) {
-            Log.i(LOG_TAG, "Exception  ListFragment.mGridview.setAdapter(ListFragment.mAdapter) = " + e.toString());
+                        rAdapter = new StepListAdapter(tContext, mStepList);
+        } catch (Exception e)
+        {
             throw new RuntimeException(e);
         }
-        rAdapter.notifyDataSetChanged();
+        rRecyclerView.setHasFixedSize(true);
+//        rLayoutManager = new GridLayoutManager(tContext, gridColumnsNumber(tContext));
+        rLayoutManager = new GridLayoutManager(tContext, 1);
+        rRecyclerView.setLayoutManager(rLayoutManager);
+        rRecyclerView.setAdapter(rAdapter);
+
+//        try {
+//            rAdapter = new StepListAdapter(tContext, mStepList);
+//        } catch (Exception e) {
+//            Log.i(LOG_TAG, "Exception  mAdapter = new BakingListAdapter(tContext, R.layout.grid_item_layout, mRecipeList); = " + e.toString());
+//        }
+//        rAdapter.notifyDataSetChanged();
+//
+//        try {
+//            rRecyclerView.setAdapter(ListFragment.rAdapter);
+//        } catch (Exception e) {
+//            Log.i(LOG_TAG, "Exception  ListFragment.mGridview.setAdapter(ListFragment.mAdapter) = " + e.toString());
+//            throw new RuntimeException(e);
+//        }
+//        rAdapter.notifyDataSetChanged();
+//
+
+
+
     }
 
     public static void doIngredientView(Context tContext) {
@@ -131,6 +156,14 @@ public class ListFragment extends Fragment {
         ingredientsTV.setText(ingredients);
 
         Context context = tContext;
+
+        final String PREFS_NAME = "BakingAppWidget";
+        SharedPreferences.Editor spEditor = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+        spEditor.putString("recName", recName);
+        spEditor.putString("ingredients", ingredients);
+        spEditor.apply();
+
+
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
         ComponentName thisWidget = new ComponentName(context, BakingWidgetProvider.class);

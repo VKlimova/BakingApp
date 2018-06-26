@@ -10,19 +10,20 @@
  See the License for the specific language governing permissions and
  limitations under the License.-->
 
-<!--Layout for a GridView item in the Menu Activity-->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/grid_item_layout"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
-    android:background="@drawable/grid_color_selector"
-    android:orientation="vertical"
-    android:padding="5dp">
+
+<!--<LinearLayout-->
+    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/grid_item_layout"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="5dp"-->
+    <!--android:background="@drawable/grid_color_selector"-->
+    <!--android:orientation="vertical"-->
+    <!--android:padding="5dp">-->
 
     <TextView
-        android:id="@+id/step_name"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/recipe_item_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -31,4 +32,4 @@
         android:textColor="@color/darkGrey"
         android:textSize="17sp" />
 
-</LinearLayout>
+<!--</LinearLayout>-->
