@@ -39,7 +39,6 @@ public class Json {
         return recipeList;
     }
 
-
     /**
      * takes as the input raw Json string, fills in the ingredientList[] array
      *

@@ -14,17 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.RemoteViews;
 import android.widget.TextView;
+
 import com.amargodigits.bakingapp.model.Ingredient;
 import com.amargodigits.bakingapp.model.Step;
 import com.amargodigits.bakingapp.utils.NetworkUtils;
+
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
-import static com.amargodigits.bakingapp.BakingListAdapter.gridColumnsNumber;
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
 
 /*
@@ -44,8 +43,9 @@ public class ListFragment extends Fragment {
     OnStepListener mStepListener;
 
     public static interface OnStepListener {
-        void onStep(String stepDescr, String stepVideoUrl, String thumbUrl);
+        void onStep(String stepDescr, String stepVideoUrl, String thumbUrl, String stepId);
     }
+
     // Override onAttach to make sure that the container activity has implemented the callback
     @Override
     public void onAttach(Context context) {
@@ -56,7 +56,7 @@ public class ListFragment extends Fragment {
         try {
             mStepListener = (OnStepListener) context;
         } catch (ClassCastException e) {
-            Log.i(LOG_TAG, "ListFragment: must implement OnImageClickListener" );
+            Log.i(LOG_TAG, "ListFragment: must implement OnImageClickListener");
             throw new ClassCastException(context.toString()
                     + " must implement OnImageClickListener");
         }
@@ -68,7 +68,6 @@ public class ListFragment extends Fragment {
                 inflater.inflate(R.layout.fragment_steps_list, container, false);
         mContext = getContext();
         rRecyclerView = (RecyclerView) rootView.findViewById(R.id.step_grid_view);
-
         rLayoutManager = new GridLayoutManager(mContext, 1);
         ingredientsTV = (TextView) rootView.findViewById(R.id.ingredients_text_view);
         Intent intent = getActivity().getIntent();
@@ -89,57 +88,20 @@ public class ListFragment extends Fragment {
             Log.i(LOG_TAG, "ListFragment: Loading Steps data exception: " + e.toString());
             throw new RuntimeException(e);
         }
-//        rGridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-//                Step item = (Step) adapterView.getItemAtPosition(position);
-//                String stepDescr = item.getDescription();
-//                String stepThumbUrl = item.getThumbnailUrl();
-//                String stepVideoUrl = item.getVideoUrl();
-//
-//                try {
-//                    mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl);
-//                } catch (Exception e) {
-//                    Log.i(LOG_TAG, "ListFragment mStepListener.onStep(stepDescr, stepVideoUrl, stepThumbUrl) Exception:\n "
-//                            + e.toString());
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
+
         return rootView;
     }
 
     public static void doStepView(Context tContext) {
         try {
-                        rAdapter = new StepListAdapter(tContext, mStepList);
-        } catch (Exception e)
-        {
+            rAdapter = new StepListAdapter(tContext, mStepList);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         rRecyclerView.setHasFixedSize(true);
-//        rLayoutManager = new GridLayoutManager(tContext, gridColumnsNumber(tContext));
         rLayoutManager = new GridLayoutManager(tContext, 1);
         rRecyclerView.setLayoutManager(rLayoutManager);
         rRecyclerView.setAdapter(rAdapter);
-
-//        try {
-//            rAdapter = new StepListAdapter(tContext, mStepList);
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Exception  mAdapter = new BakingListAdapter(tContext, R.layout.grid_item_layout, mRecipeList); = " + e.toString());
-//        }
-//        rAdapter.notifyDataSetChanged();
-//
-//        try {
-//            rRecyclerView.setAdapter(ListFragment.rAdapter);
-//        } catch (Exception e) {
-//            Log.i(LOG_TAG, "Exception  ListFragment.mGridview.setAdapter(ListFragment.mAdapter) = " + e.toString());
-//            throw new RuntimeException(e);
-//        }
-//        rAdapter.notifyDataSetChanged();
-//
-
-
-
     }
 
     public static void doIngredientView(Context tContext) {
@@ -154,16 +116,12 @@ public class ListFragment extends Fragment {
                     .concat(mIngredientList.get(j).getMeasure());
         }
         ingredientsTV.setText(ingredients);
-
         Context context = tContext;
-
         final String PREFS_NAME = "BakingAppWidget";
         SharedPreferences.Editor spEditor = context.getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
         spEditor.putString("recName", recName);
         spEditor.putString("ingredients", ingredients);
         spEditor.apply();
-
-
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
         ComponentName thisWidget = new ComponentName(context, BakingWidgetProvider.class);

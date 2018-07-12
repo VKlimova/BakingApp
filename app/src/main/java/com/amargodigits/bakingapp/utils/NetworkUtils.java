@@ -81,14 +81,10 @@ public class NetworkUtils {
         protected ArrayList<Recipe> doInBackground(Integer... params) {
             String jsonResponse="";
             if (isOnline(mContext)) {
-                Log.i(LOG_TAG, "LoadRecipiesTask doInBackground isOnline 1");
                 try {
                     URL scheduleRequestUrl = NetworkUtils.buildRecipiesUrl();
-                    Log.i(LOG_TAG, "LoadRecipiesTask doInBackground 2");
                     String recipeResponse = NetworkUtils
                             .getResponseFromHttpUrl(scheduleRequestUrl);
-                    Log.i(LOG_TAG, "LoadRecipiesTask doInBackground isOnline 3");
-
                     try {
 
                          jsonResponse = recipeResponse;
@@ -96,11 +92,8 @@ public class NetworkUtils {
                     {
                         Log.i(LOG_TAG, "LoadRecipiesTask doInBackground Exception " + e.toString());
                     }
-
                     ArrayList<Recipe> recipeList = new ArrayList<>();
-                    Log.i(LOG_TAG, "LoadRecipiesTask doInBackground isOnline 4");
                     recipeList= Json.getRecipeListStringsFromJson(jsonResponse);
-                    Log.i(LOG_TAG, "LoadRecipiesTask doInBackground recipeList.size="+ recipeList.size());
                     return recipeList;
                 } catch (Exception e) {
                     Log.i(LOG_TAG, R.string.error_message + e.toString());
@@ -111,18 +104,13 @@ public class NetworkUtils {
             }
             return null;
         }
-
         @Override
         protected void onPostExecute(ArrayList<Recipe> result) {
-            Log.i(LOG_TAG, "LoadRecipiesTask onPostExecute");
             super.onPostExecute(result);
-           Log.i(LOG_TAG, "LoadRecipiesTask onPostExecute");
             mRecipeList = result;
-
             doGridView(mContext);
         }
     }
-
 
     /**
      * This method creates AsyncTask to make a Network request in background

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -25,7 +26,9 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
+
 import com.squareup.picasso.Picasso;
 
 /*
@@ -41,7 +44,7 @@ public class StepFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(LOG_TAG, "StepFragment onCreateView");
         View rootView = inflater.inflate(R.layout.fragment_step_detail, container, false);
-      mContext = getContext();
+        mContext = getContext();
         stepTV = (TextView) rootView.findViewById(R.id.step_text_view);
         stepVideo = (TextView) rootView.findViewById(R.id.step_video_view);
         mPlayerView = (SimpleExoPlayerView) rootView.findViewById(R.id.playerView);
