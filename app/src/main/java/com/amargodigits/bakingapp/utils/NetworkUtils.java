@@ -26,7 +26,7 @@ import static com.amargodigits.bakingapp.ListFragment.mIngredientList;
 import static com.amargodigits.bakingapp.ListFragment.mStepList;
 import static com.amargodigits.bakingapp.ListFragment.doStepView;
 
-public class NetworkUtils {
+final public class NetworkUtils {
     /**
      * Builds the URL used to get Recipies list from the server.
      */

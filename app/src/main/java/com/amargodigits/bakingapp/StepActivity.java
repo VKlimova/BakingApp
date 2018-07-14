@@ -50,7 +50,7 @@ public class StepActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Launch
-                Log.i(LOG_TAG, "StepActivity .onClickNextStep (mContext,  recId)\n recId=" + stepId);
+//                Log.i(LOG_TAG, "StepActivity .onClickNextStep (mContext,  recId)\n recId=" + stepId);
                 NavigationUtils.onClickNextStep(mContext, recName, stepId);
             }
         });
@@ -58,7 +58,7 @@ public class StepActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Launch
-                Log.i(LOG_TAG, "StepActivity .onClickPrevStep (mContext,  recId)\n recId=" + stepId);
+//                Log.i(LOG_TAG, "StepActivity .onClickPrevStep (mContext,  recId)\n recId=" + stepId);
                 NavigationUtils.onClickPrevStep(mContext, recName, stepId);
             }
         });

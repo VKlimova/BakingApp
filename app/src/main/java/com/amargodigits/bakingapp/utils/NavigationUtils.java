@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.util.Log;
 import com.amargodigits.bakingapp.RecipeActivity;
 import com.amargodigits.bakingapp.StepActivity;
+import com.amargodigits.bakingapp.StepFragment;
 import com.amargodigits.bakingapp.model.Recipe;
 import com.amargodigits.bakingapp.model.Step;
 import java.util.ListIterator;
@@ -38,7 +39,7 @@ public class NavigationUtils {
         }
         }
         catch (Exception e) {
-            Log.i(LOG_TAG, "NavigationUtils Exception " + e.toString());
+            Log.i(LOG_TAG, "NavigationUtils onClickNextRecipe Exception " + e.toString());
         }
         return ;
     }
@@ -70,23 +71,18 @@ public class NavigationUtils {
 
     public static void onClickNextStep (Context mContext, String recName, String stepId){
         int intStepId;
-        Log.i(LOG_TAG, "NavigationUtils onClickNextStep stepId=" + stepId);
         try {
             intStepId = (Integer) Integer.parseInt(stepId);
             // incrementing intStepId because steps numbering is zero-based
             intStepId = intStepId + 1;
-            Log.i(LOG_TAG, "NavigationUtils onClickNextStep intStepId=" + intStepId);
-            Log.i(LOG_TAG, "NavigationUtils onClickNextStep mStepList.size = " + mStepList.size());
             ListIterator<Step> it = mStepList.listIterator(intStepId);
             Step item;
             if (it.hasNext()) {
                 item = it.next();
                 String nextStepId = item.getId();
-                Log.i(LOG_TAG, "NavigationUtils onClickNextStep nextStepId=" + nextStepId);
                 String nextStepDescr = item.getDescription();
                 String stepThumbUrl = item.getThumbnailUrl();
                 String stepVideoUrl = item.getVideoUrl();
-                Log.i(LOG_TAG, "NavigationUtils onClickNextStep, nextStepDescr : " + nextStepDescr);
                 Intent intent = new Intent(mContext, StepActivity.class);
                 intent.putExtra("stepId", nextStepId);
                 intent.putExtra("stepDescr", nextStepDescr);
@@ -103,7 +99,7 @@ public class NavigationUtils {
             }
         }
         catch (Exception e) {
-            Log.i(LOG_TAG, "NavigationUtils Exception " + e.toString());
+            Log.i(LOG_TAG, "NavigationUtils onClickNextStep Exception " + e.toString());
         }
         return ;
     }
