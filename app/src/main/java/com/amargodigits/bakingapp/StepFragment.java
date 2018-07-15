@@ -171,6 +171,82 @@ public class StepFragment extends Fragment {
         }
     }
 
+    public void initPlayer(String stepVideoUrl)
+    {
+        try {
+            if ((stepVideoUrl != null) && (!stepVideoUrl.isEmpty())) {
+                if (stepVideoUrl.contains(".mp4")) {
+                    BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+                    TrackSelection.Factory videoTrackSelectionFactory =
+                            new AdaptiveTrackSelection.Factory(bandwidthMeter);
+                    TrackSelector trackSelector =
+                            new DefaultTrackSelector(videoTrackSelectionFactory);
+                    exoPlayer =
+                            ExoPlayerFactory.newSimpleInstance(mContext, trackSelector);
+                    mPlayerView.setPlayer(exoPlayer);
+                    exoPlayer.setPlayWhenReady(playerPlay);
+
+//    Example taken from:  https://stackoverflow.com/questions/47731779/detect-pause-resume-in-exoplayer
+                    exoPlayer.addListener(new Player.DefaultEventListener() {
+                        @Override
+                        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                            if (playWhenReady && playbackState == Player.STATE_READY) {
+                                // media actually playing
+                                playerPlay = true;
+                            } else if (playWhenReady) {
+                                // might be idle (plays after prepare()),
+                                // buffering (plays when data available)
+                                // or ended (plays when seek away from end)
+                                playerPlay = true;
+                            } else {
+                                // player paused in any state
+                                playerPlay = false;
+                            }
+                        }
+                    });
+                    String userAgent = Util.getUserAgent(getContext(), "BakingApp");
+                    Uri mediaUri = Uri.parse(stepVideoUrl);
+                    MediaSource videoSource = new ExtractorMediaSource(mediaUri,
+                            new DefaultDataSourceFactory(getContext(), userAgent),
+                            new DefaultExtractorsFactory(),
+                            null, null);
+                    exoPlayer.prepare(videoSource);
+                    mPlayerView.setVisibility(View.VISIBLE);
+                } else {
+                    stepVideo.setText(getString(R.string.no_video));
+                    mPlayerView.setVisibility(View.GONE);
+                }
+            } else {
+                stepVideo.setText(getString(R.string.no_video));
+                mPlayerView.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "StepFragment stepVideoUrl Exception " + e.toString());
+        }
+
+
+        try {
+//            curPosition = savedInstanceState.getLong(CUR_POSITION);
+//            playerPlay = savedInstanceState.getBoolean(PLAYER_PLAY);
+//            lastVideoUrl = savedInstanceState.getString(LAST_VIDEO_URL);
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "StepFragment onActivityCreated Exception " + e.toString());
+        }
+//        // compare current video and previous video. If we've switched to the other video, start playback from 0
+        if (lastVideoUrl != thisVideoUrl) {
+            curPosition = 0;
+        }
+        lastVideoUrl = thisVideoUrl;
+        try {
+//            savedInstanceState.putString(LAST_VIDEO_URL, lastVideoUrl);
+            if (exoPlayer != null) {
+                exoPlayer.setPlayWhenReady(playerPlay);
+                exoPlayer.seekTo(curPosition);
+            }
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "Step-Fragment onActivityCreated Exception " + e.toString());
+        }
+    }
 
 
     @Override
@@ -195,7 +271,22 @@ public class StepFragment extends Fragment {
         releasePlayer();
     }
 
-    
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Util.SDK_INT > 23) {
+            initPlayer(thisVideoUrl);
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if ((Util.SDK_INT <= 23 || exoPlayer == null)) {
+            initPlayer(thisVideoUrl);
+        }
+    }
+
     private void releasePlayer() {
         if (exoPlayer != null) {
             curPosition = exoPlayer.getCurrentPosition();
