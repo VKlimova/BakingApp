@@ -171,17 +171,31 @@ public class StepFragment extends Fragment {
         }
     }
 
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (Util.SDK_INT <= 23) {
+            releasePlayer();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (Util.SDK_INT > 23) {
+            releasePlayer();
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         releasePlayer();
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
+    
     private void releasePlayer() {
         if (exoPlayer != null) {
             curPosition = exoPlayer.getCurrentPosition();
