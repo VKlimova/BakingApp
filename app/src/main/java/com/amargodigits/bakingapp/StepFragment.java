@@ -28,7 +28,9 @@ import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+
 import static com.amargodigits.bakingapp.MainActivity.LOG_TAG;
+
 import com.squareup.picasso.Picasso;
 
 /*
@@ -42,10 +44,10 @@ public class StepFragment extends Fragment {
     final String CUR_POSITION = "CUR_POSITION";
     final String PLAYER_PLAY = "PLAYER_PLAY";
     final String LAST_VIDEO_URL = "LAST_VIDEO_URL";
-    public long curPosition=0;
+    public long curPosition = 0;
     public String lastVideoUrl = "";
     public String thisVideoUrl;
-    public boolean playerPlay=true;
+    public boolean playerPlay = true;
     public SimpleExoPlayer exoPlayer;
 
 
@@ -62,8 +64,7 @@ public class StepFragment extends Fragment {
     }
 
     public void setStepDetails(String stepDescr, String stepVideoUrl, String stepThumbUrl) {
-        thisVideoUrl=stepVideoUrl;
-        if(lastVideoUrl!=thisVideoUrl) {curPosition=0;}
+        thisVideoUrl = stepVideoUrl;
         if ((stepDescr != null) && (!stepDescr.isEmpty())) stepTV.setText(stepDescr);
         else stepTV.setText(getString(R.string.descr_empty));
         try {
@@ -85,15 +86,15 @@ public class StepFragment extends Fragment {
                         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                             if (playWhenReady && playbackState == Player.STATE_READY) {
                                 // media actually playing
-                                playerPlay=true;
+                                playerPlay = true;
                             } else if (playWhenReady) {
                                 // might be idle (plays after prepare()),
                                 // buffering (plays when data available)
                                 // or ended (plays when seek away from end)
-                                playerPlay=true;
+                                playerPlay = true;
                             } else {
                                 // player paused in any state
-                                playerPlay=false;
+                                playerPlay = false;
                             }
                         }
                     });
@@ -136,7 +137,9 @@ public class StepFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        if (exoPlayer != null) { curPosition = exoPlayer.getCurrentPosition();}
+        if (exoPlayer != null) {
+            curPosition = exoPlayer.getCurrentPosition();
+        }
         savedInstanceState.putLong(CUR_POSITION, curPosition);
         savedInstanceState.putBoolean(PLAYER_PLAY, playerPlay);
         savedInstanceState.putString(LAST_VIDEO_URL, lastVideoUrl);
@@ -149,13 +152,22 @@ public class StepFragment extends Fragment {
             curPosition = savedInstanceState.getLong(CUR_POSITION);
             playerPlay = savedInstanceState.getBoolean(PLAYER_PLAY);
             lastVideoUrl = savedInstanceState.getString(LAST_VIDEO_URL);
-            if(lastVideoUrl!=thisVideoUrl) {curPosition=0;}
-            lastVideoUrl=thisVideoUrl;
-            if (exoPlayer != null) {
-            exoPlayer.setPlayWhenReady(playerPlay);
-            exoPlayer.seekTo(curPosition); }
         } catch (Exception e) {
             Log.i(LOG_TAG, "StepFragment onActivityCreated Exception " + e.toString());
+        }
+//        // compare current video and previous video. If we've switched to the other video, start playback from 0
+        if (lastVideoUrl != thisVideoUrl) {
+            curPosition = 0;
+        }
+        lastVideoUrl = thisVideoUrl;
+        try {
+            savedInstanceState.putString(LAST_VIDEO_URL, lastVideoUrl);
+            if (exoPlayer != null) {
+                exoPlayer.setPlayWhenReady(playerPlay);
+                exoPlayer.seekTo(curPosition);
+            }
+        } catch (Exception e) {
+            Log.i(LOG_TAG, "Step-Fragment onActivityCreated Exception " + e.toString());
         }
     }
 
@@ -172,7 +184,7 @@ public class StepFragment extends Fragment {
 
     private void releasePlayer() {
         if (exoPlayer != null) {
-            curPosition=exoPlayer.getCurrentPosition();
+            curPosition = exoPlayer.getCurrentPosition();
             exoPlayer.stop();
             exoPlayer.release();
             exoPlayer = null;
