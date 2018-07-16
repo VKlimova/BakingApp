@@ -173,6 +173,10 @@ public class StepFragment extends Fragment {
 
     public void initPlayer(String stepVideoUrl)
     {
+
+        if (exoPlayer != null) {
+            return;
+        }
         try {
             if ((stepVideoUrl != null) && (!stepVideoUrl.isEmpty())) {
                 if (stepVideoUrl.contains(".mp4")) {
@@ -226,9 +230,6 @@ public class StepFragment extends Fragment {
 
 
         try {
-//            curPosition = savedInstanceState.getLong(CUR_POSITION);
-//            playerPlay = savedInstanceState.getBoolean(PLAYER_PLAY);
-//            lastVideoUrl = savedInstanceState.getString(LAST_VIDEO_URL);
         } catch (Exception e) {
             Log.i(LOG_TAG, "StepFragment onActivityCreated Exception " + e.toString());
         }
